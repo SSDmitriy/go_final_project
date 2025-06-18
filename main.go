@@ -4,13 +4,26 @@ import (
 	_ "encoding/json"
 	"fmt"
 	"go_final_project/internal/server"
+	"go_final_project/internal/storage"
 	"net/http"
 	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 )
 
+//var db *sql.DB
+
 func main() {
+
+	if err := storage.Init("scheduler.db"); err != nil {
+		fmt.Printf("Ошибка инициализации БД: %s", err)
+	}
+	//defer storage.Close()
+
+	db := storage.GetDB()
+
+	db.Close()
+
 	r := chi.NewRouter()
 
 	// Статические файлы
