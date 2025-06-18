@@ -35,6 +35,7 @@ func setupStaticFiles(r *chi.Mux) {
 	r.Handle("/*", fs)
 	r.Handle("/css/*", http.StripPrefix("/css/", http.FileServer(http.Dir(filepath.Join(server.WebDir, "css")))))
 	r.Handle("/js/*", http.StripPrefix("/js/", http.FileServer(http.Dir(filepath.Join(server.WebDir, "js")))))
+
 	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(server.WebDir, "favicon.ico"))
 	})
