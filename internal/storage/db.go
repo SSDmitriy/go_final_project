@@ -4,12 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	_ "modernc.org/sqlite"
 )
-
-const dbFile = "scheduler.db"
 
 const Schema = `
 CREATE TABLE scheduler (
@@ -30,52 +27,39 @@ CREATE INDEX tasks_date ON scheduler (date);
 `
 
 var (
-	db     *sql.DB
-	dbPath string
+	db *sql.DB
 )
 
 func Init(dbFile string) error {
 
-	absPath, err := filepath.Abs(dbFile)
-	if err != nil {
-		return fmt.Errorf("Ошибка 003 получения пути БД: %s", err)
-	}
-
-	dbPath = absPath
-
-	_, err = os.Stat(dbPath)
+	_, err := os.Stat(dbFile)
 	install := os.IsNotExist(err)
 
+	db, err = sql.Open("sqlite", dbFile)
+	if err != nil {
+		return fmt.Errorf("Ошибка 004 открытия базы данных: %s", err)
+	}
+
 	if install {
-		fmt.Println("База данных не найдена, будет создана.")
-		db, err = sql.Open("sqlite", dbPath)
-		if err != nil {
-			fmt.Println("Ошибка 004 открытия базы данных: ", err)
-			return nil
-		}
+		fmt.Println("База данных не найдена, будет создана новая.")
 
 		if _, err := db.Exec(Schema); err != nil {
-			fmt.Println("Ошибка 005 создания таблицы базы данных: ", err)
-			return nil
+			return fmt.Errorf("Ошибка 005 создания таблицы базы данных: %s", err)
 		}
 
 		fmt.Println("База данных создана.")
-		return nil
 	}
-
-	if err := db.Ping(); err != nil {
-		db.Close()
-		return fmt.Errorf("ошибка подключения к БД: %w", err)
-	}
-
-	// db, err = sql.Open("sqlite", dbFile)
-	// if err != nil {
-	// 	fmt.Println("Ошибка 005 открытия базы данных: ", err)
-	// }
 
 	return nil
 }
 
 func GetDB() *sql.DB {
 	return db
+}
+
+func Close() error {
+	if db != nil {
+		return db.Close()
+	}
+	return nil
 }

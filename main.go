@@ -11,11 +11,11 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-//var db *sql.DB
+const dbFile = "scheduler.db"
 
 func main() {
 
-	if err := storage.Init("scheduler.db"); err != nil {
+	if err := storage.Init(dbFile); err != nil {
 		fmt.Printf("Ошибка инициализации БД: %s", err)
 	}
 	//defer storage.Close()
