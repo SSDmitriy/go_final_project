@@ -2,23 +2,24 @@ package util
 
 import (
 	"fmt"
+
 	"strconv"
 	"strings"
 	"time"
 )
 
-const dateFormat = "20060102"
+const DateFormat = "20060102"
 
 func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, error) {
 	var nextDate time.Time
 
-	startDate, err := time.Parse("20060102", dStart)
+	startDate, err := time.Parse(DateFormat, dStart)
 	if err != nil {
 		return "", fmt.Errorf("Ошибка 101 - неверный формат даты.")
 	}
 
 	if !ValidateString(repeatRule) {
-		return "", fmt.Errorf("Ошибка 102 - неверный формат правила повторения залдач.")
+		return "", fmt.Errorf("Ошибка 102 - неверный формат правила повторения задач.")
 	}
 
 	nextDate = startDate
@@ -44,7 +45,7 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 		}
 	}
 
-	return nextDate.Format("20060102"), nil
+	return nextDate.Format(DateFormat), nil
 }
 
 func ValidateString(s string) bool {
