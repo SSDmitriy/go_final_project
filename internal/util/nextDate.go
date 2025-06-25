@@ -31,7 +31,7 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 
 		for {
 			nextDate = nextDate.AddDate(0, 0, interval)
-			if afterNow(nextDate, now) {
+			if AfterNow(nextDate, now) {
 				break
 			}
 		}
@@ -40,7 +40,7 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 	if period == 'y' {
 		for {
 			nextDate = nextDate.AddDate(1, 0, 0)
-			if afterNow(nextDate, now) {
+			if AfterNow(nextDate, now) {
 				break
 			}
 		}
@@ -83,6 +83,6 @@ func ValidateString(s string) bool {
 	}
 }
 
-func afterNow(date time.Time, now time.Time) bool {
+func AfterNow(date time.Time, now time.Time) bool {
 	return date.After(now)
 }
