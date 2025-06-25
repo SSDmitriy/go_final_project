@@ -3,6 +3,7 @@ package main
 import (
 	_ "encoding/json"
 	"fmt"
+	"go_final_project/internal/api"
 	"go_final_project/internal/server"
 	"go_final_project/internal/storage"
 	"net/http"
@@ -16,15 +17,16 @@ const dbFile = "scheduler.db"
 func main() {
 
 	if err := storage.Init(dbFile); err != nil {
-		fmt.Printf("Ошибка инициализации БД: %s", err)
+		fmt.Printf("ошибка инициализации БД: %s", err)
 	}
-	//defer storage.Close()
 
 	db := storage.GetDB()
 
-	db.Close()
+	db.Close() //!
 
 	r := chi.NewRouter()
+
+	api.Init(r)
 
 	// Статические файлы
 	setupStaticFiles(r)
@@ -33,7 +35,7 @@ func main() {
 	err := http.ListenAndServe(":"+port, r)
 
 	if err != nil {
-		fmt.Printf("Ошибка 001 при запуске сервера: %s", err.Error())
+		fmt.Printf("ошибка 001 при запуске сервера: %s", err.Error())
 		return
 	}
 
