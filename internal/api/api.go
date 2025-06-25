@@ -31,7 +31,7 @@ func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 		nowDate, err = time.Parse(util.DateFormat, nowStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ошибка 201 парсинга текущей даты"))
+			w.Write([]byte("ошибка 201 парсинга текущей даты"))
 			return
 		}
 	}

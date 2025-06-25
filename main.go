@@ -17,7 +17,7 @@ const dbFile = "scheduler.db"
 func main() {
 
 	if err := storage.Init(dbFile); err != nil {
-		fmt.Printf("Ошибка инициализации БД: %s", err)
+		fmt.Printf("ошибка инициализации БД: %s", err)
 	}
 
 	db := storage.GetDB()
@@ -35,7 +35,7 @@ func main() {
 	err := http.ListenAndServe(":"+port, r)
 
 	if err != nil {
-		fmt.Printf("Ошибка 001 при запуске сервера: %s", err.Error())
+		fmt.Printf("ошибка 001 при запуске сервера: %s", err.Error())
 		return
 	}
 

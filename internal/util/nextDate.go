@@ -15,17 +15,19 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 
 	startDate, err := time.Parse(DateFormat, dStart)
 	if err != nil {
-		return "", fmt.Errorf("Ошибка 101 - неверный формат даты.")
+		return "", fmt.Errorf("ошибка 101 - неверный формат даты")
 	}
 
 	if !ValidateString(repeatRule) {
-		return "", fmt.Errorf("Ошибка 102 - неверный формат правила повторения задач.")
+		return "", fmt.Errorf("ошибка 102 - неверный формат правила повторения задач")
 	}
 
 	nextDate = startDate
 	period := repeatRule[0]
+
 	if period == 'd' {
-		interval, _ := strconv.Atoi(repeatRule[:1])
+		parts := strings.Split(repeatRule, " ")
+		interval, _ := strconv.Atoi(parts[1])
 
 		for {
 			nextDate = nextDate.AddDate(0, 0, interval)
@@ -33,7 +35,6 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 				break
 			}
 		}
-
 	}
 
 	if period == 'y' {
