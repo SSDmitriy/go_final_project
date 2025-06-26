@@ -8,8 +8,8 @@ import (
 func Init(r *chi.Mux) {
 	r.Get("/api/nextdate", nextDayHandler)
 	r.Post("/api/task", addTaskHandler)
+	r.Get("/api/tasks", getTasksHandler)
 
-	// r.Get("/tasks", getTasks)
 	// r.Post("/tasks", postTasks)
 	// r.Get("/tasks/{id}", getTask)
 	// r.Delete("/tasks/{id}", deleteTask)

@@ -62,7 +62,7 @@ func checkDate(task *storage.Task) error {
 		nextDate, err = util.NextTaskDate(now, task.Date, task.Repeat)
 	}
 
-	if util.AfterNow(now, t) {
+	if util.AfterNow(t, now) {
 		if len(task.Repeat) == 0 {
 			// если правила повторения нет, то берём сегодняшнее число
 			task.Date = now.Format("20060102")
