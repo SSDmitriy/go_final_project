@@ -18,7 +18,8 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Неверный формат JSON: " + err.Error()})
+		//json.NewEncoder(w).Encode(map[string]string{"error": "Неверный формат JSON: " + err.Error()})
+		AwriteJson(w, map[string]string{"error": "Неверный формат JSON: " + err.Error()})
 		return
 	}
 
@@ -60,6 +61,9 @@ func checkDate(task *storage.Task) error {
 
 	if task.Repeat != "" {
 		nextDate, err = util.NextTaskDate(now, task.Date, task.Repeat)
+		if err != nil {
+			return fmt.Errorf("ошибка вычисления следующей даты")
+		}
 	}
 
 	if util.AfterNow(t, now) {
