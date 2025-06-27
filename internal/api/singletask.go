@@ -6,7 +6,6 @@ import (
 )
 
 func getSingleTaskHandler(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	id := r.FormValue("id")
 
 	task, err := storage.GetSingleTask(id)
@@ -15,5 +14,5 @@ func getSingleTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	AwriteJson(w, task)
+	writeJson(w, task)
 }

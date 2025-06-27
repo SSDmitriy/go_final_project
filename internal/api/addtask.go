@@ -12,38 +12,35 @@ import (
 
 func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
 	var task storage.Task
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		//json.NewEncoder(w).Encode(map[string]string{"error": "Неверный формат JSON: " + err.Error()})
-		AwriteJson(w, map[string]string{"error": "Неверный формат JSON: " + err.Error()})
+		writeError(w, "error\": \"Неверный формат JSON: "+err.Error())
 		return
 	}
 
 	if task.Title == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Не указано название задачи"})
+		writeError(w, "error\": \"Не указано название задачи")
 		return
 	}
 
 	if err := checkDate(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		writeError(w, "error: "+err.Error())
 		return
 	}
 
 	id, err := storage.AddTask(&task)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Ошибка добавления задачи в базу данных: " + err.Error()})
+		writeError(w, "error\": \"Ошибка добавления задачи в базу данных: "+err.Error())
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{"id": id})
+	writeJson(w, map[string]interface{}{"id": id})
 }
 
 func checkDate(task *storage.Task) error {

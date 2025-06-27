@@ -19,8 +19,16 @@ func Init(r *chi.Mux) {
 
 }
 
-func AwriteJson(w http.ResponseWriter, data any) {
+func writeError(w http.ResponseWriter, errorMsg string) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	json.NewEncoder(w).Encode(struct {
+		Error string `json:"error"`
+	}{
+		Error: errorMsg,
+	})
+}
+
+func writeJson(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	json.NewEncoder(w).Encode(data)
-
 }
