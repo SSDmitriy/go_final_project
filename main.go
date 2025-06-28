@@ -28,7 +28,7 @@ func main() {
 
 	api.Init(r)
 
-	// Статические файлы
+	// Статические файлы ПОСЛЕ маршрутов api
 	setupStaticFiles(r)
 
 	port := server.DefaultPort
@@ -54,22 +54,4 @@ func setupStaticFiles(r *chi.Mux) {
 	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(server.WebDir, "favicon.ico"))
 	})
-
 }
-
-// func getTask(w http.ResponseWriter, r *http.Request) {
-// 	resp, err := []byte{'a', 'b', 'c'}, json.RawMessage([]byte{'1', '2'})
-
-// 	//json.Marshal(artists)
-
-// 	if err != nil {
-// 		http.Error(w, "erorroro 999", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	w.Header().Set("Content-Type", "application/json")
-
-// 	w.WriteHeader(http.StatusOK)
-
-// 	w.Write(resp)
-// }

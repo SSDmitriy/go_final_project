@@ -34,8 +34,6 @@ func AddTask(task *Task) (int64, error) {
 func Tasks(limit int) ([]*Task, error) {
 	tasks := make([]*Task, 0)
 
-	//selectQuery := fmt.Sprintf("SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT %d", limit)
-	//selectQuery := fmt.Sprintf("SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT :limit", sql.Named("limit", limit))
 	selectQuery := "SELECT id, date, title, comment, repeat FROM scheduler ORDER BY date LIMIT ?"
 
 	rows, err := db.Query(selectQuery, limit)
@@ -88,4 +86,31 @@ func GetSingleTask(idStr string) (*Task, error) {
 	}
 
 	return task, nil
+}
+
+func UpdateTask(task *Task) error {
+
+	updateQuery := `UPDATE scheduler SET date = :date, title = :title, comment = :comment, repeat = :repeat WHERE id = :id`
+
+	res, err := db.Exec(updateQuery,
+		sql.Named("date", task.Date),
+		sql.Named("title", task.Title),
+		sql.Named("comment", task.Comment),
+		sql.Named("repeat", task.Repeat),
+		sql.Named("id", task.ID))
+
+	if err != nil {
+		return err
+	}
+
+	// метод RowsAffected() возвращает количество записей к которым
+	// был применена SQL команда
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf(`ошибка - некорректный id задачи`)
+	}
+	return nil
 }

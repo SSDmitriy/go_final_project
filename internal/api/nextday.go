@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// sample: api/nextdate?now=20240126&date=20240126&repeat=y
+// sample query: api/nextdate?now=20240126&date=20240126&repeat=y
 func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 	nowStr := r.FormValue("now")
 
