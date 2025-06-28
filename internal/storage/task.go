@@ -3,7 +3,9 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"go_final_project/internal/util"
 	"strconv"
+	"time"
 )
 
 type Task struct {
@@ -111,6 +113,44 @@ func UpdateTask(task *Task) error {
 	}
 	if count == 0 {
 		return fmt.Errorf(`ошибка - некорректный id задачи`)
+	}
+
+	return nil
+}
+
+func UpdateDate(idStr string) error {
+
+	task, err := GetSingleTask(idStr)
+	if err != nil {
+		return fmt.Errorf("ошибка обновления даты - невозможно получить задачу из базы: %s", err)
+	}
+
+	now := time.Now()
+	startDate := now.Format(util.DateFormat)
+
+	newDate, err := util.NextTaskDate(now, startDate, task.Repeat)
+	if err != nil {
+		return fmt.Errorf("ошибка обновления даты - невозможно вычислить следующую дату: %s", err)
+	}
+
+	updateDateQuery := `UPDATE scheduler SET date = :newDate WHERE id = :id`
+
+	res, err := db.Exec(updateDateQuery,
+		sql.Named("newDate", newDate),
+		sql.Named("id", task.ID))
+
+	if err != nil {
+		return fmt.Errorf(`ошибка обновления даты задачи`)
+	}
+
+	// метод RowsAffected() возвращает количество записей к которым
+	// был применена SQL команда
+	count, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return fmt.Errorf(`ошибка одновления даты - некорректный id задачи`)
 	}
 
 	return nil

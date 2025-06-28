@@ -14,9 +14,9 @@ CREATE TABLE scheduler (
 	date CHAR(8) NOT NULL DEFAULT '' CHECK(
         length(date) = 8
 		AND (date NOT LIKE '%[^0-9]%')
-		AND (SUBSTR(date, 0, 4) BETWEEN '2000' AND '2100')
-		AND (SUBSTR(date, 4, 2) BETWEEN '01' AND '12')
-		AND (SUBSTR(date, 6, 2) BETWEEN '01' AND '31')
+		AND (SUBSTR(date, 1, 4) BETWEEN '2000' AND '2100')
+		AND (SUBSTR(date, 5, 2) BETWEEN '01' AND '12')
+		AND (SUBSTR(date, 7, 2) BETWEEN '01' AND '31')
     ),
 	title VARCHAR(256) NOT NULL DEFAULT 'Задача:',
 	comment TEXT,

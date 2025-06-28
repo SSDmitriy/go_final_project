@@ -15,6 +15,7 @@ func Init(r *chi.Mux) {
 	r.Get("/api/task", getSingleTaskHandler)
 	r.Put("/api/task", updateTaskHandler)
 	r.Delete("/api/task", deleteTaskHandler)
+	r.Post("/api/task/done", doneTaskHandler)
 }
 
 func writeError(w http.ResponseWriter, errorMsg string) {
