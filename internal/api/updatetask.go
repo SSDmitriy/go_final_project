@@ -7,19 +7,19 @@ import (
 	"net/http"
 )
 
-func addTaskHandler(w http.ResponseWriter, r *http.Request) {
+func updateTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	var task storage.Task
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "error\": \"Неверный формат JSON: "+err.Error())
+		writeError(w, "ошибка - неверный формат JSON: "+err.Error())
 		return
 	}
 
 	if task.Title == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "error\": \"Не указано название задачи")
+		writeError(w, "ошибка - не указано название задачи")
 		return
 	}
 
@@ -29,13 +29,13 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := storage.AddTask(&task)
+	err := storage.UpdateTask(&task)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		writeError(w, "error\": \"Ошибка добавления задачи в базу данных: "+err.Error())
+		writeError(w, "ошибка обновления задачи в базе данных: "+err.Error())
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	writeJson(w, map[string]interface{}{"id": id})
+	w.WriteHeader(http.StatusOK)
+	writeJson(w, struct{}{})
 }
