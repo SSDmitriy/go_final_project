@@ -112,5 +112,32 @@ func UpdateTask(task *Task) error {
 	if count == 0 {
 		return fmt.Errorf(`ошибка - некорректный id задачи`)
 	}
+
+	return nil
+}
+
+func DeleteTask(idStr string) error {
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return fmt.Errorf("ошибка - невозможно конвертировать id в int: %s", err)
+	}
+
+	deleteQuery := `DELETE FROM scheduler WHERE id = :id`
+
+	res, err := db.Exec(deleteQuery,
+		sql.Named("id", id))
+	if err != nil {
+		return fmt.Errorf(`ошибка выполнения DELETE запроса`)
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf(`ошибка RowsAffected`)
+	}
+	if count == 0 {
+		return fmt.Errorf(`ошибка удаления - задача с таким id не найдена`)
+	}
+
 	return nil
 }

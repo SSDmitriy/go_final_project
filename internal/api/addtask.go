@@ -13,13 +13,13 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "error\": \"Неверный формат JSON: "+err.Error())
+		writeError(w, "jошибка - неверный формат JSON: "+err.Error())
 		return
 	}
 
 	if task.Title == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "error\": \"Не указано название задачи")
+		writeError(w, "ошибка - Не указано название задачи")
 		return
 	}
 
@@ -32,7 +32,7 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := storage.AddTask(&task)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		writeError(w, "error\": \"Ошибка добавления задачи в базу данных: "+err.Error())
+		writeError(w, "ошибка добавления задачи в базу данных: "+err.Error())
 		return
 	}
 
