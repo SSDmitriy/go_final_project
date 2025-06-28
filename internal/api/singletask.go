@@ -10,7 +10,7 @@ func getSingleTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	task, err := storage.GetSingleTask(idStr)
 	if err != nil {
-		writeError(w, "ошибка при получении задач из базы данных: "+err.Error())
+		writeError(w, err.Error())
 		return
 	}
 

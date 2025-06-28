@@ -35,7 +35,7 @@ func main() {
 	err := http.ListenAndServe(":"+port, r)
 
 	if err != nil {
-		fmt.Printf("ошибка 001 при запуске сервера: %s", err.Error())
+		fmt.Printf("ошибка ListenAndServe при запуске сервера: %v", err)
 		return
 	}
 

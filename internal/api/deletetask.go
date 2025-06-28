@@ -11,7 +11,7 @@ func deleteTaskHandler(w http.ResponseWriter, r *http.Request) {
 	err := storage.DeleteTask(idStr)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		writeError(w, "ошибка удаления задачи в базе данных: "+err.Error())
+		writeError(w, err.Error())
 		return
 	}
 

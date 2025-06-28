@@ -15,11 +15,11 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 
 	startDate, err := time.Parse(DateFormat, dStart)
 	if err != nil {
-		return "", fmt.Errorf("ошибка 101 - неверный формат даты")
+		return "", fmt.Errorf("ошибка NextTaskDate - неверный формат даты")
 	}
 
-	if !ValidateString(repeatRule) {
-		return "", fmt.Errorf("ошибка 102 - неверный формат правила повторения задач")
+	if !validateStringRule(repeatRule) {
+		return "", fmt.Errorf("ошибка NextTaskDate - неверный формат правила повторения задач")
 	}
 
 	nextDate = startDate
@@ -49,7 +49,7 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 	return nextDate.Format(DateFormat), nil
 }
 
-func ValidateString(s string) bool {
+func validateStringRule(s string) bool {
 	if len(s) == 0 {
 		return false
 	}

@@ -13,19 +13,19 @@ func addTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "jошибка - неверный формат JSON: "+err.Error())
+		writeError(w, "ошибка addTaskHandler - неверный формат JSON: "+err.Error())
 		return
 	}
 
 	if task.Title == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "ошибка - Не указано название задачи")
+		writeError(w, "ошибка addTaskHandler - не указано название задачи")
 		return
 	}
 
 	if err := checkDate(&task); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		writeError(w, "error: "+err.Error())
+		writeError(w, err.Error())
 		return
 	}
 

@@ -14,7 +14,7 @@ func getTasksHandler(w http.ResponseWriter, r *http.Request) {
 	maxCount := 50
 	tasks, err := storage.Tasks(maxCount)
 	if err != nil {
-		writeError(w, "ошибка при получении задач из базы данных: "+err.Error())
+		writeError(w, err.Error())
 		return
 	}
 

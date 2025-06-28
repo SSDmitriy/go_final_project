@@ -12,7 +12,7 @@ func doneTaskHandler(w http.ResponseWriter, r *http.Request) {
 
 	task, err := storage.GetSingleTask(idStr)
 	if err != nil {
-		writeError(w, "ошибка получения задачи из базы данных: "+err.Error())
+		writeError(w, err.Error())
 		return
 	}
 
@@ -20,14 +20,14 @@ func doneTaskHandler(w http.ResponseWriter, r *http.Request) {
 		err := storage.DeleteTask(idStr)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			writeError(w, "ошибка удаления задачи в базе данных: "+err.Error())
+			writeError(w, err.Error())
 			return
 		}
 	} else {
 		err := storage.UpdateDate(idStr)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			writeError(w, "ошибка обновления задачи в базе данных: "+err.Error())
+			writeError(w, err.Error())
 			return
 		}
 	}

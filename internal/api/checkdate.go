@@ -17,13 +17,13 @@ func checkDate(task *storage.Task) error {
 
 	t, err := time.Parse("20060102", task.Date)
 	if err != nil {
-		return fmt.Errorf("ошибка - неверный формат даты")
+		return fmt.Errorf("ошибка checkDate - неверный формат даты")
 	}
 
 	if task.Repeat != "" {
 		nextDate, err = util.NextTaskDate(now, task.Date, task.Repeat)
 		if err != nil {
-			return fmt.Errorf("ошибка вычисления следующей даты")
+			return err
 		}
 	}
 

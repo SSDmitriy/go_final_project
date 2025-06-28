@@ -37,14 +37,14 @@ func Init(dbFile string) error {
 
 	db, err = sql.Open("sqlite", dbFile)
 	if err != nil {
-		return fmt.Errorf("ошибка 004 открытия базы данных: %s", err)
+		return fmt.Errorf("ошибка Init - не удалось открыть базу данных: %v", err)
 	}
 
 	if install {
 		fmt.Println("База данных не найдена, будет создана новая.")
 
 		if _, err := db.Exec(Schema); err != nil {
-			return fmt.Errorf("ошибка 005 создания таблицы базы данных: %s", err)
+			return fmt.Errorf("ошибка Init - не удалось создать таблицу базы данных: %v", err)
 		}
 
 		fmt.Println("База данных создана.")
