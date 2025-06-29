@@ -14,9 +14,9 @@ CREATE TABLE scheduler (
 	date CHAR(8) NOT NULL DEFAULT '' CHECK(
         length(date) = 8
 		AND (date NOT LIKE '%[^0-9]%')
-		AND (SUBSTR(date, 0, 4) BETWEEN '2000' AND '2100')
-		AND (SUBSTR(date, 4, 2) BETWEEN '01' AND '12')
-		AND (SUBSTR(date, 6, 2) BETWEEN '01' AND '31')
+		AND (SUBSTR(date, 1, 4) BETWEEN '2000' AND '2100')
+		AND (SUBSTR(date, 5, 2) BETWEEN '01' AND '12')
+		AND (SUBSTR(date, 7, 2) BETWEEN '01' AND '31')
     ),
 	title VARCHAR(256) NOT NULL DEFAULT 'Задача:',
 	comment TEXT,
@@ -37,14 +37,14 @@ func Init(dbFile string) error {
 
 	db, err = sql.Open("sqlite", dbFile)
 	if err != nil {
-		return fmt.Errorf("ошибка 004 открытия базы данных: %s", err)
+		return fmt.Errorf("ошибка Init - не удалось открыть базу данных: %v", err)
 	}
 
 	if install {
 		fmt.Println("База данных не найдена, будет создана новая.")
 
 		if _, err := db.Exec(Schema); err != nil {
-			return fmt.Errorf("ошибка 005 создания таблицы базы данных: %s", err)
+			return fmt.Errorf("ошибка Init - не удалось создать таблицу базы данных: %v", err)
 		}
 
 		fmt.Println("База данных создана.")

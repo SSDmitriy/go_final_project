@@ -6,27 +6,26 @@ import (
 	"time"
 )
 
-// sample query: api/nextdate?now=20240126&date=20240126&repeat=y
 func nextDayHandler(w http.ResponseWriter, r *http.Request) {
+	var nowDate time.Time
 	nowStr := r.FormValue("now")
 
-	var nowDate time.Time
-	if nowStr == "" {
+	if len(nowStr) == 0 {
 		nowDate = time.Now()
 	} else {
 		var err error
 		nowDate, err = time.Parse(util.DateFormat, nowStr)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("ошибка 201 парсинга текущей даты"))
+			w.Write([]byte("ошибка nextDayHandler - не удалось распарсить дату"))
 			return
 		}
 	}
 
-	startDate := r.FormValue("date")
-	repeatRule := r.FormValue("repeat")
+	startDateStr := r.FormValue("date")
+	repeatRuleStr := r.FormValue("repeat")
 
-	nextDay, err := util.NextTaskDate(nowDate, startDate, repeatRule)
+	nextDay, err := util.NextTaskDate(nowDate, startDateStr, repeatRuleStr)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))

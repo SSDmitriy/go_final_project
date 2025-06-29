@@ -6,11 +6,11 @@ import (
 )
 
 func getSingleTaskHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.FormValue("id")
+	idStr := r.FormValue("id")
 
-	task, err := storage.GetSingleTask(id)
+	task, err := storage.GetSingleTask(idStr)
 	if err != nil {
-		writeError(w, "ошибка при получении задач из базы данных: "+err.Error())
+		writeError(w, err.Error())
 		return
 	}
 

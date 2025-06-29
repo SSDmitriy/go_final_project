@@ -3,7 +3,9 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"go_final_project/internal/util"
 	"strconv"
+	"time"
 )
 
 type Task struct {
@@ -25,10 +27,16 @@ func AddTask(task *Task) (int64, error) {
 		sql.Named("comment", task.Comment),
 		sql.Named("repeat", task.Repeat))
 
-	if err == nil {
+	if err != nil {
+		return -1, fmt.Errorf("ошибка AddTask - не удалось выполнить INSERT %v", err)
+	} else {
 		id, err = res.LastInsertId()
+
+		if err != nil {
+			return -2, fmt.Errorf("ошибка LastInsertId %v", err)
+		}
 	}
-	return id, err
+	return id, nil
 }
 
 func Tasks(limit int) ([]*Task, error) {
@@ -38,7 +46,7 @@ func Tasks(limit int) ([]*Task, error) {
 
 	rows, err := db.Query(selectQuery, limit)
 	if err != nil {
-		return tasks, err
+		return tasks, fmt.Errorf("ошибка Tasks - не удалось выполнить запрос SELECT: %v", err)
 	}
 	defer rows.Close()
 
@@ -46,13 +54,13 @@ func Tasks(limit int) ([]*Task, error) {
 		task := new(Task)
 		err := rows.Scan(&task.ID, &task.Date, &task.Title, &task.Comment, &task.Repeat)
 		if err != nil {
-			return tasks, err
+			return tasks, fmt.Errorf("ошибка rows.Scan %v", err)
 		}
 		tasks = append(tasks, task)
 	}
 
 	if err := rows.Err(); err != nil {
-		return tasks, err
+		return tasks, fmt.Errorf("ошибка rows.Err %v", err)
 	}
 
 	return tasks, nil
@@ -63,7 +71,7 @@ func GetSingleTask(idStr string) (*Task, error) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return nil, fmt.Errorf("ошибка - невозможно конвертировать id в int: %s", err)
+		return nil, fmt.Errorf("ошибка - невозможно конвертировать id в int: %v", err)
 	}
 
 	selectSingleQuery := "SELECT * FROM scheduler WHERE id = ?"
@@ -79,10 +87,10 @@ func GetSingleTask(idStr string) (*Task, error) {
 	if err != nil {
 		//ошибка, если задача не найдена
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("задача с id %d не найдена", id)
+			return nil, fmt.Errorf("ошибка GetSingleTask - задача с id %v не найдена", id)
 		}
 		// Возвращаем другие ошибки бд
-		return nil, fmt.Errorf("ошибка при получении задачи из базы данных: %v", err)
+		return nil, fmt.Errorf("ошибка GetSingleTask при получении задачи из базы данных: %v", err)
 	}
 
 	return task, nil
@@ -100,17 +108,77 @@ func UpdateTask(task *Task) error {
 		sql.Named("id", task.ID))
 
 	if err != nil {
-		return err
+		return fmt.Errorf("ошибка UpdateTask - не удалось выполнить UPDATE: %v", err)
 	}
 
 	// метод RowsAffected() возвращает количество записей к которым
-	// был применена SQL команда
+	// была применена SQL команда
 	count, err := res.RowsAffected()
 	if err != nil {
-		return err
+		return fmt.Errorf("ошибка res.RowsAffected: %v", err)
 	}
 	if count == 0 {
-		return fmt.Errorf(`ошибка - некорректный id задачи`)
+		return fmt.Errorf("ошибка UpdateTask - некорректный id задачи")
 	}
+
+	return nil
+}
+
+func UpdateDate(idStr string) error {
+
+	task, err := GetSingleTask(idStr)
+	if err != nil {
+		return fmt.Errorf("ошибка UpdateDate - невозможно получить задачу из базы: %s", err)
+	}
+
+	newDate, err := util.NextTaskDate(time.Now(), task.Date, task.Repeat)
+	if err != nil {
+		return fmt.Errorf("ошибка UpdateDate - не удалось вычислить следующую дату: %s", err)
+	}
+
+	updateDateQuery := `UPDATE scheduler SET date = :newDate WHERE id = :id`
+
+	res, err := db.Exec(updateDateQuery,
+		sql.Named("newDate", newDate),
+		sql.Named("id", task.ID))
+
+	if err != nil {
+		return fmt.Errorf("ошибка UpdateDate - не удалось выполнить запрос UPDATE: %v", err)
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("ошибка res.RowsAffected: %v", err)
+	}
+	if count == 0 {
+		return fmt.Errorf("ошибка UpdateDate - некорректный id задачи")
+	}
+
+	return nil
+}
+
+func DeleteTask(idStr string) error {
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return fmt.Errorf("ошибка DeleteTask - невозможно конвертировать id в int: %v", err)
+	}
+
+	deleteQuery := `DELETE FROM scheduler WHERE id = :id`
+
+	res, err := db.Exec(deleteQuery,
+		sql.Named("id", id))
+	if err != nil {
+		return fmt.Errorf("ошибка DeleteTask - не удалось выполнить запрос DELETE")
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("ошибка RowsAffected: %v", err)
+	}
+	if count == 0 {
+		return fmt.Errorf("ошибка DeleteTask - задача с таким id не найдена")
+	}
+
 	return nil
 }
