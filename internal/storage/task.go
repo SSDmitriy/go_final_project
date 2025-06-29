@@ -112,7 +112,7 @@ func UpdateTask(task *Task) error {
 	}
 
 	// метод RowsAffected() возвращает количество записей к которым
-	// был применена SQL команда
+	// была применена SQL команда
 	count, err := res.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("ошибка res.RowsAffected: %v", err)
@@ -131,10 +131,7 @@ func UpdateDate(idStr string) error {
 		return fmt.Errorf("ошибка UpdateDate - невозможно получить задачу из базы: %s", err)
 	}
 
-	now := time.Now()
-	startDate := now.Format(util.DateFormat)
-
-	newDate, err := util.NextTaskDate(now, startDate, task.Repeat)
+	newDate, err := util.NextTaskDate(time.Now(), task.Date, task.Repeat)
 	if err != nil {
 		return fmt.Errorf("ошибка UpdateDate - не удалось вычислить следующую дату: %s", err)
 	}
@@ -149,8 +146,6 @@ func UpdateDate(idStr string) error {
 		return fmt.Errorf("ошибка UpdateDate - не удалось выполнить запрос UPDATE: %v", err)
 	}
 
-	// метод RowsAffected() возвращает количество записей к которым
-	// был применена SQL команда
 	count, err := res.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("ошибка res.RowsAffected: %v", err)

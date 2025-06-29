@@ -23,9 +23,9 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 	}
 
 	nextDate = startDate
-	period := repeatRule[0]
+	period := string(repeatRule[0])
 
-	if period == 'd' {
+	if period == "d" {
 		parts := strings.Split(repeatRule, " ")
 		interval, _ := strconv.Atoi(parts[1])
 
@@ -37,7 +37,7 @@ func NextTaskDate(now time.Time, dStart string, repeatRule string) (string, erro
 		}
 	}
 
-	if period == 'y' {
+	if period == "y" {
 		for {
 			nextDate = nextDate.AddDate(1, 0, 0)
 			if AfterNow(nextDate, now) {
@@ -59,7 +59,7 @@ func validateStringRule(s string) bool {
 	switch firstChar {
 	case 'd':
 		// Проверяем формат <d><пробел><число>
-		parts := strings.SplitN(s, " ", 3)
+		parts := strings.SplitN(s, " ", 2)
 		if len(parts) != 2 {
 			return false // должно быть ровно 2 части: "d" и число
 		}
@@ -73,7 +73,7 @@ func validateStringRule(s string) bool {
 			return false // не является числом
 		}
 
-		return num >= 1 && num <= 400
+		return num >= 1 && num <= 400 //false, если число вне диапазона 1..400
 
 	case 'y':
 		return len(s) == 1 // только "y" без других символов
@@ -83,6 +83,9 @@ func validateStringRule(s string) bool {
 	}
 }
 
-func AfterNow(date time.Time, now time.Time) bool {
+func AfterNow(date, now time.Time) bool {
+	date = date.Truncate(24 * time.Hour)
+	now = now.Truncate(24 * time.Hour)
+
 	return date.After(now)
 }

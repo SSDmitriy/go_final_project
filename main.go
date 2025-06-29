@@ -22,7 +22,7 @@ func main() {
 
 	db := storage.GetDB()
 
-	defer db.Close() //!
+	defer db.Close()
 
 	r := chi.NewRouter()
 

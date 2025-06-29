@@ -6,12 +6,11 @@ import (
 	"time"
 )
 
-// пример запроса POST: api/nextdate?now=20240126&date=20240126&repeat=y
 func nextDayHandler(w http.ResponseWriter, r *http.Request) {
+	var nowDate time.Time
 	nowStr := r.FormValue("now")
 
-	var nowDate time.Time
-	if nowStr == "" {
+	if len(nowStr) == 0 {
 		nowDate = time.Now()
 	} else {
 		var err error
